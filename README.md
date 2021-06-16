@@ -1,0 +1,1 @@
+# deteccao-copias-ia
