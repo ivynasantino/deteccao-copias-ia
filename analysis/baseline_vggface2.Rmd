@@ -141,7 +141,33 @@ df_all %>%
 ```
 
 
+```{r}
+names_10_copy <- read_csv("../data/names_images_copy_index.csv") %>% 
+  mutate(dado = "13")
+
+names_50_copy <- read_csv("../data/names_images_copy_index_50.csv") %>% 
+  mutate(dado = "63")
+
+names <- bind_rows(names_10_copy,
+                   names_50_copy)
+```
 
 
+```{r}
+names %>% 
+  group_by(dado, tag) %>% 
+  summarise(quantidade_genero = n()) %>% 
+  ggplot(aes(x = dado,
+             y = quantidade_genero,
+             fill = tag)) +
+  geom_col(position = position_dodge()) +
+  labs(title = "",
+       x = "Conjunto de imagens",
+       y = "Quantidade de imagens",
+       fill = "Gênero") +
+  scale_fill_brewer(palette="Dark2")
+
+ggsave("../imgs/db.pdf")
+```
 
 
