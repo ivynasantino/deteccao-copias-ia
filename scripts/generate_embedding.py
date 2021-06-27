@@ -58,7 +58,7 @@ def parse_args():
     )
 
     parser.add_argument(
-        "-d", "--caminho_bd", required=True, help="Caminho do banco de imagens."
+        "-p", "--caminho_bd", required=True, help="Caminho do banco de imagens."
     )
 
     return parser.parse_args()
@@ -90,7 +90,7 @@ def access_db_extract(path_db, random=False, n_imgs=10):
 
 
 def save_embeddings_db(predicts):
-    with open("../data/embeddings.csv", "w") as f:
+    with open("../data/embeddings_copy_index_50.csv", "w") as f:
         for row in predicts:
             for value in row:
                 f.write(f"{value},")
@@ -111,7 +111,7 @@ def run_generate_embeddings():
     print("Gerar embeddings")
     print(f"Tempo total: {total_time} segundos")
 
-    save_names_db(db_imgs, "../data/names_images.csv")
+    save_names_db(db_imgs, "../data/names_images_copy_index_50.csv")
     save_embeddings_db(predicts)
 
 
