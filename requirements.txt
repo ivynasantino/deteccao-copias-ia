@@ -1,0 +1,16 @@
+git+https://github.com/rcmalli/keras-vggface.git
+mtcnn
+opencv-python
+Pillow
+PyYAML
+numpy
+scipy
+matplotlib
+pandas
+sklearn
+scikit-learn
+mlxtend
+black
+tensorflow==1.13.1
+h3py
+h5py==2.10.0
