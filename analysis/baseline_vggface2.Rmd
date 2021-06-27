@@ -1,0 +1,147 @@
+---
+title: "Análise baseline mestrado"
+output: html_notebook
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = FALSE,
+  warning = FALSE,
+  message = FALSE,
+  fig.cap = '',
+  fig.align = 'center',
+  fig.width = 8,
+  fig.height = 5
+)
+```
+
+
+```{r}
+library(tidyverse)
+library(here)
+theme_set(theme_bw())
+```
+
+```{r}
+tempo_emb <- tibble::tibble(quantidade_imagens = c("13", "63"),
+                        tempo_seg = c(29.93, 435.82),
+                        tipo = c("embeddings", "embeddings")) %>% 
+  mutate(busca = "linear")
+
+tempo_rec <- tibble::tibble(quantidade_imagens = c("13", "63"),
+                            tempo_seg = c(0.006782, 0.23305),
+                            tipo = c("deteccao_copias", "deteccao_copias")) %>% 
+  mutate(busca = "linear")
+
+df <- bind_rows(tempo_emb, tempo_rec) 
+```
+
+
+```{r}
+df %>% 
+  ggplot(aes(x = quantidade_imagens,
+             y = sqrt(tempo_seg),
+             fill = tipo)) +
+  geom_col(position = position_dodge()) +
+  labs(title = "Tempo gasto para gerar embeddings das imagens",
+       x = "Quantidade de imagens",
+       y = "Tempo gasto (seg)")
+```
+
+```{r}
+db_copys_linear <- tibble::tibble(quantidade_images = c("13", "63"),
+                              quantidade_images_copias = c(3, 13),
+                              quantidade_copy_detectadas = c(3, 13)) %>% 
+  mutate(busca = "linear")
+
+db_copys_index <- tibble::tibble(quantidade_images = c("13", "63"),
+                              quantidade_images_copias = c(3, 13),
+                              quantidade_copy_detectadas = c(3, 13)) %>% 
+  mutate(busca = "indexada")
+
+
+db_all <- bind_rows(db_copys_linear,
+                    db_copys_index)
+```
+
+```{r}
+db_all %>% 
+  ggplot(aes(x = quantidade_images,
+             fill = busca,
+             y = (quantidade_copy_detectadas/quantidade_images_copias)*100))  +
+  geom_col(position = position_dodge()) + 
+  labs(title = "Performance de detecção de imagens duplicadas",
+       x = "Quantidade de imagens",
+       y = "Porcentagem de acerto de imagens duplicadas")
+```
+
+```{r}
+tempo_emb_index <- tibble::tibble(quantidade_imagens = c("13", "63"),
+                        tempo_seg = c(32.56, 390.94),
+                        tipo = c("embeddings", "embeddings")) %>% 
+  mutate(busca = "indexada")
+
+tempo_rec_index <- tibble::tibble(quantidade_imagens = c("13", "63"),
+                            tempo_seg = c(0.003704, 0.1273),
+                            tipo = c("deteccao_copias", "deteccao_copias")) %>% 
+  mutate(busca = "indexada")
+
+df_index <- bind_rows(tempo_emb_index, tempo_rec_index)
+```
+
+```{r}
+df_index %>% 
+  ggplot(aes(x = quantidade_imagens,
+             y = sqrt(tempo_seg),
+             fill = tipo)) +
+  geom_col(position = position_dodge()) +
+  labs(title = "Tempo gasto para gerar embeddings das imagens",
+       subtitle = "Forma indexada",
+       x = "Quantidade de imagens",
+       y = "Tempo gasto (seg)")
+```
+
+```{r}
+df_all <- bind_rows(df, df_index)
+```
+
+```{r}
+df_all %>% 
+  ggplot(aes(x = quantidade_imagens,
+             y = tempo_seg,
+             fill = busca,
+             label = tempo_seg)) +
+  geom_col(position = position_dodge()) +
+  geom_text(color = "#424242", size = 3.5, position = position_dodge(width = .9)) +
+  facet_grid(~tipo) +
+  labs(title = "",
+       x = "Quantidade de imagens",
+       y = "Tempo consumido (segundos)")
+#ggsave("../imgs/etapas.pdf")
+```
+
+```{r}
+(435.82-390.94)/435.82
+```
+
+```{r}
+df_all %>% 
+  filter(tipo == "deteccao_copias") %>% 
+  ggplot(aes(x = quantidade_imagens,
+             y = tempo_seg,
+             fill = busca,
+             label = tempo_seg)) +
+  geom_col(position = position_dodge()) +
+  geom_text(color = "#424242", size = 3.5, position = position_dodge(width = .9)) +
+  labs(title = "",
+       x = "Quantidade de imagens",
+       y = "Tempo consumido (segundos)")
+
+#ggsave("../imgs/deteccao.pdf")
+```
+
+
+
+
+
+
